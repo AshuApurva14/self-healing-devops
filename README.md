@@ -13,8 +13,6 @@
   Intelligent CI/CD + Monitoring + AI-based Auto Recovery System  
 </p>
 
-# AI-Driven Self-Healing DevOps Pipeline
-
 > A 0-cost project that grew into a working self-healing pipeline with CI, monitoring, dashboards, and machine learning.
 
 ## 👋 Getting to know the project
@@ -50,7 +48,7 @@ GitHub → Jenkins CI/CD → Docker Container (App)
                 AI Model (Isolation Forest)
                           ↓
                 Self-Healing (Auto Restart)
-
+```
 
 ## ⚙️ Why this is cool
 
