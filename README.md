@@ -83,13 +83,29 @@ curl -i http://localhost:5000/metrics
 - Add dashboard for `http_requests_total`, `process_cpu_user_seconds_total`, etc.
 - Use Grafana alerting later with Prometheus Alertmanager.
 
-### Screenshots (ready-to-use)
+### Screenshots 
+
+### 🔹 Prometheus dashboard
 
 ![Prometheus dashboard](screenshots/prometheus-dashboard.png)
+
+### 🔹 Grafana self-healing dashboard
 ![Grafana self-healing dashboard](screenshots/grafana-self-healing-dash.png)
+
+### 🔹 Jenkins build status
+
 ![Jenkins build status](screenshots/jenkins-success-build-status.png)
+
+### 🔹 Metrics endpoint
+
 ![Metrics endpoint](screenshots/localhost-metrics.png)
+
+### 🔹 Docker Desktop
+
 ![Docker Desktop](screenshots/docker-desktop.png)
+
+### 🔹 VS Code 
+
 ![VS Code](screenshots/vs-code.png)
 
 ## 🤖 AI behavior in `ai-monitor.py`
