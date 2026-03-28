@@ -1,55 +1,55 @@
 # AI-Driven Self-Healing DevOps Pipeline
 
-> A zero-cost, end-to-end self-healing DevOps pipeline integrating Docker, Prometheus, Grafana, Jenkins, and AI-based anomaly detection.
+> A 0-cost project that grew into a working self-healing pipeline with CI, monitoring, dashboards, and machine learning.
 
-## 🚀 Overview
+## 👋 Getting to know the project
 
-This project demonstrates a production-ready DevOps workflow with built-in self-healing. The stack includes:
+Hi! I’m Risu. I built this project to move from theory to hands-on practice. This repo is a lab where I combine:
 
-- Node.js app exposing `/health` and `/metrics`
-- Prometheus for metrics scraping
-- Grafana for dashboards + alerting visuals
-- Jenkins for CI/CD pipeline (declarative pipeline integration)
-- Monitoring agent (`monitor.js`) for rule-based recovery
-- ML anomaly detection (`ai-monitor.py`) using `IsolationForest`
-- Container orchestration with Docker, restart on failures
+- a simple Node.js app that simulates random failures
+- Prometheus scraping metrics
+- Grafana dashboards to visualize health
+- Jenkins pipeline concepts for CI/CD
+- a watchdog (`monitor.js`) for quick recovery
+- an Isolation Forest-based monitor (`ai-monitor.py`) for anomaly-driven healing
 
-## 🔥 Why this is special
+**Goal:** ship software that detects and fixes itself, so ops teams can move faster with fewer interrupts.
 
-- Handles intermittent failures via randomized `500` responses in app health
-- Detects anomalies using machine learning, not only static thresholds
-- Automatically restarts containers when issues appear
-- Designed for extendibility to Kubernetes/ELK/Slack/Email alerts
+## 🧩 What’s inside (explained casually)
 
-## 📁 Project files
+- `app.js`: tiny Express app with `/`, `/health`, `/metrics`. It returns `500` randomly to simulate flakiness.
+- `monitor.js`: simple Node.js loop. If `/health` fails, `docker restart my-app`.
+- `ai-monitor.py`: trains an `IsolationForest` from live health responses, then restarts on anomalies.
+- `prometheus.yml`: scraping all the expected endpoints.
+- `Dockerfile`: containerizes the Node.js service.
 
-- `app.js` — Node.js service with metrics and random intermittent failures
-- `monitor.js` — Polls `http://localhost:5000/health`, restarts `my-app` on failure
-- `ai-monitor.py` — trains IsolationForest, monitors health, does self-healing restart
-- `prometheus.yml` — scrape config for the `app.js` metrics endpoint
-- `Dockerfile` — builds `my-app` container
+## ⚙️ Why this is cool
 
-## 🛠️ Setup (local test)
+1. It actually breaks sometimes, so we can test resilience
+2. It recovers automatically in both rule-based and ML-based modes
+3. It is easy-to-clone, run, and iterate on
+4. It is already aligned with the “shift-left reliability” mindset
 
-1. Clone repo:
+## 🚀 Run it locally (in 7 steps)
+
+1. Clone and go in:
 
 ```bash
 git clone https://github.com/rishu-1112/self-healing-devops.git
 cd self-healing-devops
 ```
 
-2. Build and run Docker app:
+2. Install Node dependencies:
+
+```bash
+npm install
+```
+
+3. Build and start the app in Docker:
 
 ```bash
 docker build -t my-app .
 docker run -d --name my-app -p 5000:5000 my-app
-```
-
-3. Start Node.js app locally (alternatively from container):
-
-```bash
-npm install
-node app.js
 ```
 
 4. Start Prometheus:
@@ -58,120 +58,93 @@ node app.js
 docker run -d --name prom -p 9090:9090 -v "$PWD/prometheus.yml:/etc/prometheus/prometheus.yml" prom/prometheus
 ```
 
-5. Add a Grafana container:
+5. Start Grafana:
 
 ```bash
 docker run -d --name grafana -p 3000:3000 grafana/grafana
 ```
 
-6. Run self-healing monitoring:
+6. In one terminal run:
 
-- Rule-based: `node monitor.js`
-- AI-based: `python3 ai-monitor.py`
+- rule-based watcher: `node monitor.js`
+- AI-based watcher: `python3 ai-monitor.py`
 
-## 📈 Metrics & dashboards
-
-- Prometheus scrapes `http://host.docker.internal:5000/metrics` or `http://localhost:5000/metrics`
-- Grafana dashboard configuration in this repo is project-driven (manual UI setup)
-
-### Screenshots
-
-![Prometheus metrics](screenshots/prometheus-dashboard.png)
-![Grafana self-healing dashboard](screenshots/grafana-self-healing-dash.png)
-![Jenkins build status](screenshots/jenkins-success-build-status.png)
-![Local metrics endpoint](screenshots/localhost-metrics.png)
-![Docker Desktop status](screenshots/docker-desktop.png)
-![VS Code view](screenshots/vs-code.png)
-
-## 🧠 AI & anomaly detection
-
-`ai-monitor.py` behavior:
-
-- Collect 20 samples from `/health` to train baseline
-- Each sample encoded as 1 (OK) or 0 (FAIL)
-- Trains `IsolationForest(contamination=0.2)` and predicts online
-- Restart container `my-app` when anomaly is detected > 15s apart
-
-## 🧩 Future enhancements
-
-- Kubernetes auto-scaling (HPA/Cluster Autoscaler)
-- ELK stack (Logstash/Elasticsearch/Kibana) for log-driven anomalies
-- Email/Slack alerts with Prometheus Alertmanager
-- Advanced models: LSTM, ARIMA, hybrid rule-ML
-- Dynamic deployment pipeline with Jenkinsfiles and GitHub Actions
-
-## 📝 Jenkins CI/CD example (concept)
-
-Pipeline includes:
-
-- Build Docker image
-- Push to registry
-- Deploy to environment (dev/staging/prod)
-- Run health checks and rollback on fail
-- Trigger `monitor.js` or `ai-monitor.py` as optional recovery stage
-
-## ✅ Quick demo commands
+7. Check the app:
 
 ```bash
-# Run poller
-node monitor.js
-
-# Run ML self-healing
-python3 ai-monitor.py
-
-# Manual health check
 curl -i http://localhost:5000/health
-
-# Metrics check
 curl -i http://localhost:5000/metrics
 ```
 
-## 📦 Requirements
+## 📊 What to explore in Prometheus + Grafana
+
+- Prometheus UI: `http://localhost:9090`
+- Grafana UI: `http://localhost:3000`
+- Add dashboard for `http_requests_total`, `process_cpu_user_seconds_total`, etc.
+- Use Grafana alerting later with Prometheus Alertmanager.
+
+### Screenshots (ready-to-use)
+
+![Prometheus dashboard](screenshots/prometheus-dashboard.png)
+![Grafana self-healing dashboard](screenshots/grafana-self-healing-dash.png)
+![Jenkins build status](screenshots/jenkins-success-build-status.png)
+![Metrics endpoint](screenshots/localhost-metrics.png)
+![Docker Desktop](screenshots/docker-desktop.png)
+![VS Code](screenshots/vs-code.png)
+
+## 🤖 AI behavior in `ai-monitor.py`
+
+- Warm-up: collect ~20 samples from `/health` (OK=1, FAIL=0)
+- Train `IsolationForest(contamination=0.2)` from this profile
+- Loop every 5 sec: ping health, run `predict`, if anomaly -> `docker restart my-app`
+- Cooldown 15 sec between restarts to avoid thrash
+
+## 🌱 What I want to add next
+
+- Kubernetes support (Deployments + HPA)
+- Central logs (ELK / Loki)
+- Slack/email alerts on incidents
+- Better anomaly models (LSTM sequence model, autoencoders)
+- GitOps pipeline with Jenkinsfile + branch gating
+
+## 🛠️ Quick commands to play with
+
+```bash
+node monitor.js
+python3 ai-monitor.py
+curl -i http://localhost:5000/health
+curl -i http://localhost:5000/metrics
+```
+
+## 📦 Prerequisites
 
 - Node.js 18+
 - Python 3.9+
-- scikit-learn
-- Docker
+- pip packages: `requests numpy scikit-learn`
+- Docker installed and running
 - (Optional) Jenkins + Prometheus + Grafana
 
-Install Python deps:
-
-```bash
+```
 pip install requests numpy scikit-learn
 ```
 
-## 💬 Community Feedback
+## 💬 The human side
 
-This project is in active progress. Feedback on production hardening, observability best-practices, security (RBAC/network policies), and CI/CD branching strategies is highly welcome.
+This started as a challenge: “Can I make a full self-healing pipeline for ₹0?”
 
----
-
----
-
-## 👩‍💻 Author
-
-**Risu Kumari**  
-B.Tech CSE (2023–2027) | Sarala Birla University  
-
-🔗 GitHub: https://github.com/rishu-1112  
+Answer: yes—and it was a great learning project. If you’re reading this, I’d love your feedback, your ideas, and your collaboration.
 
 ---
 
-## 🌟 About the Author
+## 👩‍💻 About me
 
-I am passionate about building real-world systems that combine **DevOps, Cloud, and Artificial Intelligence**.  
+I’m Risu Kumari (B.Tech CSE 2023–2027, Sarala Birla University). I love shipping real systems in DevOps, cloud, and AI.
 
-This project is part of my journey to explore:
-- Scalable system design  
-- Intelligent automation  
-- Self-healing infrastructure  
-
-I believe in **learning by building**, and this project is just the beginning 🚀  
+- GitHub: https://github.com/rishu-1112
 
 ---
 
-## 🤝 Let's Connect
+## 🤝 Let’s connect
 
-If you are working on similar domains (DevOps / AI / Cloud), feel free to connect and collaborate!  
+Open to mentorship requests, collaboration, and early-stage product hackathons.
 
-💬 Open to discussions, feedback, and opportunities.
