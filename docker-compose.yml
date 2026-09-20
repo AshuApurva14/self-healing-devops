@@ -1,0 +1,36 @@
+services:
+  node-app:
+    build: 
+      context: .
+    ports:
+      - 5000:5000
+  prometheus:
+    image: prom/prometheus:latest
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+    ports:
+      - '9090:9090'
+    volumes:
+      # Bind mount your local configuration file into the container
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+      # Named volume to ensure metric data persists across container restarts
+      - prometheus_data:/prometheus
+    restart: unless-stopped
+    depends_on:
+      - node-app
+
+  grafana:
+    image: grafana/grafana:latest
+    container_name: grafana
+    ports:
+      - '3000:3000'
+    volumes:
+      - grafana_data:/var/lib/grafana
+    restart: unless-stopped
+    depends_on:
+      - prometheus
+
+volumes:
+    prometheus_data:
+    grafana_data:
